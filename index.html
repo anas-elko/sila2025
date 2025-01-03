@@ -6,7 +6,7 @@
     <title>اختبار الأسئلة</title>
     <style>
         body {
-            background-image: url(img/sila.jpg);
+            background-color: rgb(255, 255, 255);
             font-family: Arial, sans-serif;
             direction: rtl;
             margin: 0;
@@ -28,7 +28,7 @@
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            background-color: #f9f9f9;
+            background-color: #e8eee8;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
@@ -46,7 +46,7 @@
         .options-container li {
             list-style-type: none;
             padding: 10px;
-            background-color: #f0f0f0;
+            background-color: #ffffff;
             border-radius: 5px;
             cursor: pointer;
             margin-bottom: 10px;
@@ -54,7 +54,7 @@
         }
 
         .options-container li:hover {
-            background-color: #e0e0e0;
+            background-color: #e0dcdc;
         }
 
         .result {
@@ -68,13 +68,18 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            color: #333;
+            color: #c7b3b3;
+        }
+        h2{
+            color: rgb(50, 137, 50);
+            font-size: 32px;
         }
     </style>
 </head>
 <body>
 
     <h1>اختبار الأسئلة</h1>
+    <h2>Sila Foundation - مؤسسة صِلة</h2>
     <div class="questions-container" id="questions-container"></div>
     <div id="final-result" class="final-result"></div>
 
@@ -181,7 +186,16 @@
 
         // دالة لعرض النتيجة النهائية
         function showFinalResult() {
-            finalResultContainer.textContent = `النتيجة النهائية: ${correctAnswers} إجابة صحيحة من أصل ${questions.length} سؤال.`;
+            const finalResult = `النتيجة النهائية: ${correctAnswers} إجابة صحيحة من أصل ${questions.length} سؤال.`;
+            finalResultContainer.textContent = finalResult;
+            
+            // إنشاء رابط WhatsApp
+            const whatsappLink = `https://wa.me/0656404263?text=${encodeURIComponent(finalResult)}`;
+            
+            // إضافة الرابط إلى الصفحة
+            finalResultContainer.innerHTML += `
+                <p>لإرسال النتيجة عبر واتساب، اضغط <a href="${whatsappLink}" target="_blank">هنا</a>.</p>
+            `;
         }
 
         // بدء عرض الأسئلة عند تحميل الصفحة
