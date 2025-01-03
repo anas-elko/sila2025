@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الأسئلة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .questions-container {
+            display: flex;
+            flex-direction: column; /* عرض الأسئلة بشكل عمودي */
+            gap: 20px;
+        }
+
+        .question-box {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-box h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column; /* عرض الخيارات بشكل عمودي */
+        }
+
+        .options-container li {
+            list-style-type: none;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .options-container li:hover {
+            background-color: #e0e0e0;
+        }
+
+        .result {
+            margin-top: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .final-result {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>اختبار الأسئلة</h1>
+    <div class="questions-container" id="questions-container"></div>
+    <div id="final-result" class="final-result"></div>
+
+    <script>
+        // البيانات المدمجة في ملف JSON داخل الكود
+        const questions = [
+            {
+                "question": "ما هو أكبر كوكب في النظام الشمسي؟",
+                "options": ["الأرض", "المشتري", "الزهرة", "المريخ"],
+                "correctAnswer": 2
+            },
+            {
+                "question": "ما هو أسرع حيوان على وجه الأرض؟",
+                "options": ["الفهد", "الأسد", "الذئب", "الطائر"],
+                "correctAnswer": 1
+            },
+            {
+                "question": "ما هي أكبر قارة من حيث المساحة؟",
+                "options": ["أفريقيا", "آسيا", "أوروبا", "أمريكا"],
+                "correctAnswer": 2
+            },
+            {
+                "question": "كم عدد الكواكب في النظام الشمسي؟",
+                "options": ["7", "8", "9", "10"],
+                "correctAnswer": 2
+            },
+            {
+                "question": "من هو مخترع المصباح الكهربائي؟",
+                "options": ["توماس إديسون", "ألكسندر غراهام بيل", "نيوتن", "أينشتاين"],
+                "correctAnswer": 1
+            },
+            {
+                "question": "ما هو العنصر الكيميائي الذي يستخدم في صناعة أنابيب الأشعة السينية؟",
+                "options": ["الذهب", "الزئبق", "الرصاص", "التنغستن"],
+                "correctAnswer": 4
+            }
+        ];
+
+        const questionsContainer = document.getElementById('questions-container');
+        const finalResultContainer = document.getElementById('final-result');
+        let correctAnswers = 0;  // عداد الإجابات الصحيحة
+
+        // دالة لعرض الأسئلة والخيارات
+        function displayQuestions() {
+            questions.forEach((questionData, index) => {
+                const questionBox = document.createElement('div');
+                questionBox.classList.add('question-box');
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.textContent = questionData.question;
+
+                const optionsContainer = document.createElement('ul');
+                optionsContainer.classList.add('options-container');
+
+                questionData.options.forEach((option, i) => {
+                    const optionElement = document.createElement('li');
+                    optionElement.textContent = option;
+                    optionElement.onclick = () => checkAnswer(i + 1, questionData.correctAnswer, questionBox);
+                    optionsContainer.appendChild(optionElement);
+                });
+
+                questionBox.appendChild(questionTitle);
+                questionBox.appendChild(optionsContainer);
+                questionsContainer.appendChild(questionBox);
+            });
+        }
+
+        // دالة للتحقق من الإجابة
+        function checkAnswer(selectedOption, correctAnswer, questionBox) {
+            let resultText = '';
+            if (selectedOption === correctAnswer) {
+                resultText = 'إجابة صحيحة!';
+                correctAnswers++;  // زيادة عداد الإجابات الصحيحة
+                questionBox.style.borderColor = 'green';
+            } else {
+                resultText = 'إجابة خاطئة!';
+                questionBox.style.borderColor = 'red';
+            }
+
+            // عرض النتيجة في نفس السؤال
+            const resultElement = document.createElement('div');
+            resultElement.classList.add('result');
+            resultElement.textContent = resultText;
+            questionBox.appendChild(resultElement);
+
+            // تعطيل الاختيارات بعد الإجابة
+            const options = questionBox.querySelectorAll('.options-container li');
+            options.forEach(option => {
+                option.style.pointerEvents = 'none'; // تعطيل التفاعل مع الخيارات بعد الاختيار
+            });
+
+            // عرض النتيجة الإجمالية بعد الإجابة على جميع الأسئلة
+            if (isAllQuestionsAnswered()) {
+                showFinalResult();
+            }
+        }
+
+        // دالة للتحقق إذا تم الإجابة على جميع الأسئلة
+        function isAllQuestionsAnswered() {
+            const totalQuestions = questions.length;
+            const answeredQuestions = document.querySelectorAll('.result').length;
+            return answeredQuestions === totalQuestions;
+        }
+
+        // دالة لعرض النتيجة النهائية
+        function showFinalResult() {
+            finalResultContainer.textContent = `النتيجة النهائية: ${correctAnswers} إجابة صحيحة من أصل ${questions.length} سؤال.`;
+        }
+
+        // بدء عرض الأسئلة عند تحميل الصفحة
+        window.onload = displayQuestions;
+
+    </script>
+
+</body>
+</html>
